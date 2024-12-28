@@ -1,0 +1,14 @@
+{
+  "name": "typing-practice-app",
+  "version": "1.0.0",
+  "description": "A typing practice app built with Electron.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . TypingPracticeApp --platform=win32 --arch=x64 --out=dist --overwrite"
+  },
+  "devDependencies": {
+    "electron": "^25.0.0",
+    "electron-packager": "^17.1.0"
+  }
+}

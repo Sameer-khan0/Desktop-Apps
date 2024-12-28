@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enhanced Typing Practice App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+  <div class="bg-white p-8 w-[90%] max-w-3xl">
+    <h1 class="text-4xl font-bold text-center text-gray-800 mb-6">Typing Practice App</h1>
+    
+    <!-- Difficulty Selector -->
+    <div class="mb-6 text-center">
+      <label class="font-bold text-gray-600">Select Difficulty: </label>
+      <select id="difficulty" class="p-2 border border-gray-300 rounded">
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
+
+    <!-- Task Display -->
+    <p id="task" class="p-4 border border-gray-300 rounded mb-4 text-lg bg-gray-50 text-gray-700 font-mono">
+      Click "Start" to get your task!
+    </p>
+
+    <!-- User Input -->
+    <textarea id="user-input" 
+      rows="5" 
+      class="w-full p-4 text-lg border border-gray-300 rounded focus:outline-none focus:ring focus:ring-blue-300 mb-4" 
+      placeholder="Start typing here..." 
+      disabled></textarea>
+
+    <!-- Buttons and Results -->
+    <div class="flex justify-between items-center">
+      <button onclick="startTask()" id="start" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+        Start
+      </button>
+      <button onclick="resetTask()" class="px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+        Reset
+      </button>
+      <span id="result" class="text-gray-800 font-medium"></span>
+    </div>
+
+    <!-- Typing Progress -->
+    <p id="progress" class="mt-4 text-gray-600 font-mono">Characters typed: 0</p>
+  </div>
+
+  <script>
+    const sampleTexts = {
+      easy: [
+        "The quick brown fox.",
+        "Hello world!",
+        "Practice makes perfect.",
+        "Stay focused and type.",
+        "Great things take time."
+      ],
+      medium: [
+        "The quick brown fox jumps over the lazy dog.",
+        "JavaScript is a versatile and powerful programming language.",
+        "Typing is a skill that improves with regular practice.",
+        "Great achievements come from consistent effort.",
+        "Never give up on your dreams."
+      ],
+      hard: [
+        "To be or not to be, that is the question.",
+        "Success is not final; failure is not fatal: It is the courage to continue that counts.",
+        "In the middle of every difficulty lies opportunity.",
+        "Programming languages help us create magical experiences.",
+        "An investment in knowledge pays the best interest."
+      ]
+    };
+
+    let currentText = "";
+    let startTime = null;
+
+    function startTask() {
+      const difficulty = document.getElementById("difficulty").value;
+      const userInput = document.getElementById("user-input");
+      const task = document.getElementById("task");
+      const result = document.getElementById("result");
+      const progress = document.getElementById("progress");
+
+      // Get random text based on difficulty
+      const texts = sampleTexts[difficulty];
+      const randomIndex = Math.floor(Math.random() * texts.length);
+      currentText = texts[randomIndex];
+
+      // Reset UI
+      userInput.value = "";
+      task.textContent = currentText;
+      result.innerHTML = "";
+      progress.textContent = "Characters typed: 0";
+      userInput.disabled = false;
+      userInput.focus();
+
+      // Record start time
+      startTime = new Date();
+    }
+
+    function resetTask() {
+      const task = document.getElementById("task");
+      const userInput = document.getElementById("user-input");
+      const result = document.getElementById("result");
+      const progress = document.getElementById("progress");
+
+      // Reset all fields
+      currentText = "";
+      task.textContent = "Click 'Start' to get your task!";
+      userInput.value = "";
+      userInput.disabled = true;
+      result.innerHTML = "";
+      progress.textContent = "Characters typed: 0";
+    }
+
+    document.getElementById("user-input").addEventListener("input", () => {
+      const userInput = document.getElementById("user-input");
+      const inputText = userInput.value;
+      const result = document.getElementById("result");
+      const progress = document.getElementById("progress");
+
+      // Update character count
+      progress.textContent = `Characters typed: ${inputText.length}`;
+
+      // Check typing status
+      if (inputText === currentText) {
+        const endTime = new Date();
+        const timeTaken = (endTime - startTime) / 1000;
+        const wordsPerMinute = (currentText.split(" ").length / timeTaken) * 60;
+        const accuracy = (currentText.length / inputText.length) * 100;
+
+        result.innerHTML = `
+          <span class="text-green-600 font-bold">Well done!</span> 
+          Speed: <span class="font-bold">${wordsPerMinute.toFixed(2)} WPM</span>, 
+          Accuracy: <span class="font-bold">${accuracy.toFixed(2)}%</span>.
+        `;
+        document.getElementById("user-input").disabled = true;
+      } else if (currentText.startsWith(inputText)) {
+        result.innerHTML = `<span class="text-blue-600">Keep going...</span>`;
+      } else {
+        result.innerHTML = `<span class="text-red-600">Oops, there's a mistake!</span>`;
+      }
+    });
+  </script>
+</body>
+</html>
